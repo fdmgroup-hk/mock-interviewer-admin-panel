@@ -66,6 +66,24 @@ export async function validateAdminAllowlist(userId) {
     return Boolean(data?.id)
 }
 
+async function resolveUserIdByEmail(email) {
+    const normalizedEmail = email?.trim()
+    if (!normalizedEmail) {
+        return null
+    }
+
+    const supabase = getSupabaseClient()
+    const { data, error } = await supabase.rpc('admin_lookup_user_id_by_email', {
+        p_email: normalizedEmail,
+    })
+
+    if (error) {
+        throw new Error(error.message)
+    }
+
+    return data ?? null
+}
+
 function applySessionFilters(query, filters) {
     if (filters.status) {
         query = query.eq('status', filters.status)
@@ -98,6 +116,15 @@ export async function listSessions(filters, page = 1) {
     const supabase = getSupabaseClient()
     const start = (page - 1) * PAGE_SIZE
     const end = start + PAGE_SIZE - 1
+    const resolvedUserIdByEmail = await resolveUserIdByEmail(filters.email)
+
+    if (filters.email?.trim() && !resolvedUserIdByEmail) {
+        return {
+            items: [],
+            total: 0,
+            pageSize: PAGE_SIZE,
+        }
+    }
 
     let query = supabase
         .from('interview_sessions')
@@ -117,6 +144,10 @@ export async function listSessions(filters, page = 1) {
         )
         .order('created_at', { ascending: false })
 
+    if (resolvedUserIdByEmail) {
+        query = query.eq('user_id', resolvedUserIdByEmail)
+    }
+
     query = applySessionFilters(query, filters)
     query = query.range(start, end)
 
@@ -135,12 +166,21 @@ export async function listSessions(filters, page = 1) {
 
 export async function exportSessions(filters) {
     const supabase = getSupabaseClient()
+    const resolvedUserIdByEmail = await resolveUserIdByEmail(filters.email)
+
+    if (filters.email?.trim() && !resolvedUserIdByEmail) {
+        return []
+    }
 
     let query = supabase
         .from('interview_sessions')
         .select('id,user_id,title,interview_type,status,created_at')
         .order('created_at', { ascending: false })
         .limit(1000)
+
+    if (resolvedUserIdByEmail) {
+        query = query.eq('user_id', resolvedUserIdByEmail)
+    }
 
     query = applySessionFilters(query, filters)
 

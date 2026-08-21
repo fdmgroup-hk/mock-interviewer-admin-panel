@@ -6,7 +6,7 @@ Read-only admin dashboard for browsing interview sessions and reports stored in 
 
 - OTP magic-link sign in
 - Allowlist-based access gate (`admin_allowlist` table)
-- Sessions list with filters (status, type, user_id, title, date range)
+- Sessions list with filters (status, type, user_id, email, title, date range)
 - Session details panel (questions, summaries, reports)
 - CSV export for filtered sessions
 
@@ -44,7 +44,7 @@ npm run build
 
 Apply migration in the main repo:
 
-- `webcam-interview-analyzer-js/supabase/migrations/20260821_admin_allowlist.sql`
+- `webcam-interview-analyzer-js/supabase/migrations/20260821_000001_admin_allowlist.sql`
 
 Then seed allowlisted admins, for example:
 
@@ -75,3 +75,20 @@ Required repo secrets:
 Required repo setting:
 
 - GitHub Pages source set to **GitHub Actions**
+
+## Release checklist
+
+Before releasing a new version:
+
+1. Update `package.json` version.
+2. Update `src/version.js` values (`APP_VERSION`, `RELEASE_DATE`).
+3. Add a new entry at the top of `CHANGELOG.md` using the existing template.
+4. Run local checks:
+
+```bash
+npm run lint
+npm run test
+npm run build
+```
+
+5. Merge/push to `main` to trigger GitHub Pages deployment.
