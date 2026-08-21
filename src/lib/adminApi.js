@@ -4,7 +4,8 @@ const PAGE_SIZE = 20
 
 export async function sendMagicLink(email) {
     const supabase = getSupabaseClient()
-    const redirectTo = window.location.origin + window.location.pathname
+    const appBasePath = import.meta.env.BASE_URL || '/'
+    const redirectTo = new URL(appBasePath, window.location.origin).toString()
 
     const { error } = await supabase.auth.signInWithOtp({
         email,
