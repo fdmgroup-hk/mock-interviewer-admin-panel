@@ -5,6 +5,6 @@ const repository = process.env.GITHUB_REPOSITORY?.split('/')[1]
 const pagesBasePath = process.env.GITHUB_ACTIONS && repository ? `/${repository}/` : '/'
 
 export default defineConfig({
-  base: pagesBasePath,
-  plugins: [react()],
+    base: pagesBasePath,
+    plugins: [react()],
 })
