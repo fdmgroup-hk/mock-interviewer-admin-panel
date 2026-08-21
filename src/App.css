@@ -133,6 +133,16 @@ button:disabled {
     color: #124067;
 }
 
+.release-meta {
+    margin: 0.8rem 0 0;
+    color: var(--muted);
+    font-size: 0.84rem;
+}
+
+.release-meta a {
+    color: var(--accent);
+}
+
 .topbar {
     display: flex;
     justify-content: space-between;

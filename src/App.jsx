@@ -10,16 +10,20 @@ import {
     validateAdminAllowlist,
 } from './lib/adminApi'
 import { downloadCsv } from './lib/csv'
+import { APP_VERSION, RELEASE_DATE } from './version'
 import './App.css'
 
 const EMPTY_FILTERS = {
     status: '',
     interviewType: '',
     userId: '',
+    email: '',
     title: '',
     dateFrom: '',
     dateTo: '',
 }
+
+const CHANGELOG_URL = `${import.meta.env.BASE_URL}CHANGELOG.md`
 
 function formatDate(value) {
     if (!value) {
@@ -36,6 +40,17 @@ function LoadingScreen({ message }) {
                 <h2>{message}</h2>
             </div>
         </main>
+    )
+}
+
+function ReleaseMeta() {
+    return (
+        <p className="release-meta">
+            Version {APP_VERSION} ({RELEASE_DATE}){' '}
+            <a href={CHANGELOG_URL} target="_blank" rel="noreferrer">
+                Changelog
+            </a>
+        </p>
     )
 }
 
@@ -72,6 +87,7 @@ function LoginScreen({ onSendLink, isSending, sendError, infoMessage }) {
 
                 {sendError ? <p className="message error">{sendError}</p> : null}
                 {infoMessage ? <p className="message info">{infoMessage}</p> : null}
+                <ReleaseMeta />
             </section>
         </main>
     )
@@ -87,6 +103,7 @@ function UnauthorizedScreen({ onSignOut, message }) {
                 <button type="button" onClick={onSignOut}>
                     Sign out
                 </button>
+                <ReleaseMeta />
             </section>
         </main>
     )
@@ -303,6 +320,16 @@ function DashboardScreen({ user, onSignOut }) {
                 </label>
 
                 <label>
+                    User email
+                    <input
+                        type="email"
+                        value={filters.email}
+                        onChange={(event) => updateFilter('email', event.target.value)}
+                        placeholder="candidate@company.com"
+                    />
+                </label>
+
+                <label>
                     Title contains
                     <input
                         value={filters.title}
@@ -355,6 +382,8 @@ function DashboardScreen({ user, onSignOut }) {
 
                 <SessionDetails session={selectedSession} />
             </section>
+
+            <ReleaseMeta />
         </main>
     )
 }
