@@ -365,7 +365,7 @@ function ProtectedRoute({ session, isAdmin, isChecking, onSignOut }) {
     }
 
     if (!session) {
-        return <Navigate to="/login" replace />
+        return <Navigate to="login" replace />
     }
 
     if (!isAdmin) {
@@ -461,7 +461,7 @@ export default function App() {
 
     const handleSignOut = async () => {
         await signOut()
-        navigate('/login', { replace: true })
+        navigate('login', { replace: true })
     }
 
     if (isBooting) {
@@ -471,10 +471,10 @@ export default function App() {
     return (
         <Routes>
             <Route
-                path="/login"
+                path="login"
                 element={
                     session ? (
-                        <Navigate to="/" replace />
+                        <Navigate to="." replace />
                     ) : (
                         <LoginScreen
                             onSendLink={handleSendLink}
@@ -496,7 +496,7 @@ export default function App() {
                     />
                 }
             />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Navigate to="." replace />} />
         </Routes>
     )
 }
